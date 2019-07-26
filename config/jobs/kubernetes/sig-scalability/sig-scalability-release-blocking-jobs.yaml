@@ -43,18 +43,12 @@ periodics:
 - cron: '1 17 * * *' # Run daily at 9:01PST (17:01 UTC)
   name: ci-kubernetes-e2e-gce-scale-performance
   tags:
-  - "perfDashPrefix: gce-5000Nodes"
-  - "perfDashJobType: performance"
-  cluster: scalability
+    - "perfDashPrefix: gce-5000Nodes-simplifiedLoad"
+    - "perfDashJobType: performance"
   labels:
     preset-service-account: "true"
     preset-k8s-ssh: "true"
     preset-e2e-scalability-common: "true"
-  annotations:
-    testgrid-alert-email: kubernetes-sig-scale@googlegroups.com,cloud-kubernetes-scalability-oncall@google.com, kubernetes-release-team@googlegroups.com
-    testgrid-dashboards: sig-release-master-informing, sig-scalability-gce, google-gce
-    testgrid-tab-name: gce-master-scale-performance
-    description: "Uses kubetest to run k8s.io/perf-tests/run-e2e.sh against a 5000-node cluster created with cluster/kube-up.sh"
   spec:
     containers:
     - args:
@@ -63,16 +57,17 @@ periodics:
       - --repo=k8s.io/perf-tests=master
       - --root=/go/src
       - --scenario=kubernetes_e2e
+      - --upload=gs://gke-scalability-prow/logs
       - --
       - --cluster=gce-scale-cluster
       - --env=HEAPSTER_MACHINE_TYPE=n1-standard-32
       # TODO(mborsz): Adjust or remove this change once we understand coredns
       # memory usage regression.
-      - --env=KUBE_DNS_MEMORY_LIMIT=300Mi
+      - --env=KUBE_DNS_MEMORY_LIMIT=800Mi
       - --extract=ci/latest
       - --gcp-nodes=5000
-      - --gcp-project=kubernetes-scale
-      - --gcp-zone=us-east1-b
+      - --gcp-project=k8s-scale-testing-2
+      - --gcp-zone=us-central1-b
       - --provider=gce
       - --test=false
       - --test-cmd=$GOPATH/src/k8s.io/perf-tests/run-e2e.sh
@@ -82,15 +77,15 @@ periodics:
       - --test-cmd-args=--nodes=5000
       - --test-cmd-args=--provider=gce
       - --test-cmd-args=--report-dir=/workspace/_artifacts
-      - --test-cmd-args=--testconfig=testing/density/config.yaml
-      - --test-cmd-args=--testconfig=testing/load/config.yaml
+      #- --test-cmd-args=--testconfig=testing/density/config.yaml
+      - --test-cmd-args=--testconfig=testing/load/experimental_config.yaml
       - --test-cmd-args=--testoverrides=./testing/density/5000_nodes/override.yaml
       - --test-cmd-args=--testoverrides=./testing/prometheus/scrape-etcd.yaml
       - --test-cmd-args=--testoverrides=./testing/prometheus/scrape-kube-proxy.yaml
       - --test-cmd-name=ClusterLoaderV2
       - --timeout=1050m
       - --use-logexporter
-      image: gcr.io/k8s-testimages/kubekins-e2e:v20190725-8880a53-master
+      image: gcr.io/k8s-testimages/kubekins-e2e:v20190522-9bf3ab0-master
       resources:
         requests:
           cpu: 6
