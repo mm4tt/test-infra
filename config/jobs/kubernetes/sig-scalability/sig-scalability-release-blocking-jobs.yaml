@@ -53,7 +53,7 @@ periodics:
     containers:
     - args:
       - --timeout=1080
-      - --repo=k8s.io/kubernetes=master:81684586d # TODO: change to recent green commit and enable build
+      - --repo=k8s.io/kubernetes=master #:81684586d # TODO: change to recent green commit and enable build
       - --repo=k8s.io/perf-tests=master
       - --root=/go/src
       - --scenario=kubernetes_e2e
