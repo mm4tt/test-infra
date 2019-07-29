@@ -38,12 +38,11 @@ periodics:
         requests:
           cpu: 6
           memory: "16Gi"
-
 # This is a sig-release-master-blocking job.
 - cron: '1 17 * * *' # Run daily at 9:01PST (17:01 UTC)
-  name: gce-5000Nodes-experimentalLoad
+  name: gce-100-experimental-load
   tags:
-    - "perfDashPrefix: gce-5000Nodes-experimentalLoad"
+    - "perfDashPrefix: ${JOB_NAME}"
     - "perfDashJobType: performance"
   labels:
     preset-service-account: "true"
@@ -59,13 +58,13 @@ periodics:
       - --scenario=kubernetes_e2e
       - --upload=gs://gke-scalability-prow/logs
       - --
-      - --cluster=gce-scale-cluster
+      - --cluster=${JOB_NAME}
       - --env=HEAPSTER_MACHINE_TYPE=n1-standard-32
       # TODO(mborsz): Adjust or remove this change once we understand coredns
       # memory usage regression.
       - --env=KUBE_DNS_MEMORY_LIMIT=800Mi
       - --extract=ci/latest
-      - --gcp-nodes=5000
+      - --gcp-nodes=100
       - --gcp-project=k8s-scale-testing-2
       - --gcp-zone=us-central1-b
       - --provider=gce
@@ -74,7 +73,7 @@ periodics:
       - --test-cmd-args=cluster-loader2
       - --test-cmd-args=--experimental-gcp-snapshot-prometheus-disk=true
       - --test-cmd-args=--experimental-prometheus-disk-snapshot-name=${JOB_NAME}-${BUILD_ID}
-      - --test-cmd-args=--nodes=5000
+      - --test-cmd-args=--nodes=100
       - --test-cmd-args=--provider=gce
       - --test-cmd-args=--report-dir=/workspace/_artifacts
       #- --test-cmd-args=--testconfig=testing/density/config.yaml
