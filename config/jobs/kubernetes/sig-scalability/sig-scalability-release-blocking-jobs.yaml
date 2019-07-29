@@ -52,16 +52,15 @@ periodics:
     containers:
     - args:
       - --timeout=1080
-      - --repo=k8s.io/kubernetes=master:f18833ee582d9f3bbe57e5f7c97f933c455640dc,80709:eb9320d61337a6c3189d9c6b1931fd64f6b19793
+      - --repo=k8s.io/kubernetes=master #:f18833ee582d9f3bbe57e5f7c97f933c455640dc,80709:eb9320d61337a6c3189d9c6b1931fd64f6b19793
       - --repo=k8s.io/perf-tests=master
       - --repo=k8s.io/release
       - --root=/go/src
       - --scenario=kubernetes_e2e
       - --upload=gs://gke-scalability-prow/logs
       - --
-      - --build=bazel
-      - --extract=local
-      - --stage=gs://gke-scalability-prow/ci/${JOB_NAME}
+      #- --build=bazel --extract=local --stage=gs://gke-scalability-prow/ci/${JOB_NAME}
+      - --extract=ci/latest
       - --cluster=${JOB_NAME}
       - --env=HEAPSTER_MACHINE_TYPE=n1-standard-32
       # TODO(mborsz): Adjust or remove this change once we understand coredns
@@ -80,7 +79,7 @@ periodics:
       - --test-cmd-args=--provider=gce
       - --test-cmd-args=--report-dir=/workspace/_artifacts
       #- --test-cmd-args=--testconfig=testing/density/config.yaml
-      - --test-cmd-args=--testconfig=testing/load/experimental_config.yaml
+      - --test-cmd-args=--testconfig=testing/load/wrong.yaml
       - --test-cmd-args=--testoverrides=./testing/prometheus/scrape-etcd.yaml
       - --test-cmd-args=--testoverrides=./testing/prometheus/scrape-kube-proxy.yaml
       - --test-cmd-name=ClusterLoaderV2
