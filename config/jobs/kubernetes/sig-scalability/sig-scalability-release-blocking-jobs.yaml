@@ -52,18 +52,20 @@ periodics:
     containers:
     - args:
       - --timeout=1080
-      - --repo=k8s.io/kubernetes=master #:81684586d # TODO: change to recent green commit and enable build
+      - --repo=k8s.io/kubernetes=master:f18833ee582d9f3bbe57e5f7c97f933c455640dc,80709:eb9320d61337a6c3189d9c6b1931fd64f6b19793
       - --repo=k8s.io/perf-tests=master
+      - --repo=k8s.io/release
       - --root=/go/src
       - --scenario=kubernetes_e2e
       - --upload=gs://gke-scalability-prow/logs
       - --
+      - --build=bazel
+      - --extract=local
       - --cluster=${JOB_NAME}
       - --env=HEAPSTER_MACHINE_TYPE=n1-standard-32
       # TODO(mborsz): Adjust or remove this change once we understand coredns
       # memory usage regression.
       - --env=KUBE_DNS_MEMORY_LIMIT=800Mi
-      - --extract=ci/latest
       - --gcp-nodes=100
       - --gcp-project=k8s-scale-testing-2
       - --gcp-zone=us-central1-b
