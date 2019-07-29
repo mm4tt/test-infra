@@ -61,6 +61,7 @@ periodics:
       - --
       - --build=bazel
       - --extract=local
+      - --stage=gs://gke-scalability-prow/ci/${JOB_NAME}
       - --cluster=${JOB_NAME}
       - --env=HEAPSTER_MACHINE_TYPE=n1-standard-32
       # TODO(mborsz): Adjust or remove this change once we understand coredns
