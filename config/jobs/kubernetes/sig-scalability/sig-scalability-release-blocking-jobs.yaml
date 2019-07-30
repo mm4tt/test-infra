@@ -40,7 +40,7 @@ periodics:
           memory: "16Gi"
 # This is a sig-release-master-blocking job.
 - cron: '1 17 * * *' # Run daily at 9:01PST (17:01 UTC)
-  name: gce-100-experimental-load
+  name: gce-5000-extended-load
   tags:
     - "perfDashPrefix: ${JOB_NAME}"
     - "perfDashJobType: performance"
@@ -53,7 +53,7 @@ periodics:
     - args:
       - --timeout=1080
       - --repo=k8s.io/kubernetes=master #:f18833ee582d9f3bbe57e5f7c97f933c455640dc,80709:eb9320d61337a6c3189d9c6b1931fd64f6b19793
-      - --repo=k8s.io/perf-tests=master
+      - --repo=k8s.io/perf-tests=master:13717fe5fa6bb88248796a956b02a35295395db1,714:dcae9fd21c978e8af19f6210f5ae46412c783bbb
       - --repo=k8s.io/release
       - --root=/go/src
       - --scenario=kubernetes_e2e
@@ -65,8 +65,8 @@ periodics:
       - --env=HEAPSTER_MACHINE_TYPE=n1-standard-32
       # TODO(mborsz): Adjust or remove this change once we understand coredns
       # memory usage regression.
-      - --env=KUBE_DNS_MEMORY_LIMIT=800Mi
-      - --gcp-nodes=100
+      - --env=KUBE_DNS_MEMORY_LIMIT=600Mi
+      - --gcp-nodes=5000
       - --gcp-project=k8s-scale-testing-2
       - --gcp-zone=us-central1-b
       - --provider=gce
@@ -75,11 +75,15 @@ periodics:
       - --test-cmd-args=cluster-loader2
       - --test-cmd-args=--experimental-gcp-snapshot-prometheus-disk=true
       - --test-cmd-args=--experimental-prometheus-disk-snapshot-name=${JOB_NAME}-${BUILD_ID}
-      - --test-cmd-args=--nodes=100
+      - --test-cmd-args=--nodes=5000
       - --test-cmd-args=--provider=gce
       - --test-cmd-args=--report-dir=/workspace/_artifacts
       #- --test-cmd-args=--testconfig=testing/density/config.yaml
-      - --test-cmd-args=--testconfig=testing/load/wrong.yaml
+      - --test-cmd-args=--testconfig=testing/load/experimental/extended_load.yaml
+      - --test-cmd-args=--testoverrides=./testing/load/experimental/overrides/enable_statefulsets.yaml
+      - --test-cmd-args=--testoverrides=./testing/load/experimental/overrides/enable_pvs.yaml
+      - --test-cmd-args=--testoverrides=./testing/load/experimental/overrides/enable_configmaps.yaml
+      - --test-cmd-args=--testoverrides=./testing/load/experimental/overrides/enable_secrets.yaml
       - --test-cmd-args=--testoverrides=./testing/prometheus/scrape-etcd.yaml
       - --test-cmd-args=--testoverrides=./testing/prometheus/scrape-kube-proxy.yaml
       - --test-cmd-name=ClusterLoaderV2
