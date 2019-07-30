@@ -53,7 +53,7 @@ periodics:
     - args:
       - --timeout=1080
       - --repo=k8s.io/kubernetes=master #:f18833ee582d9f3bbe57e5f7c97f933c455640dc,80709:eb9320d61337a6c3189d9c6b1931fd64f6b19793
-      - --repo=k8s.io/perf-tests=master:13717fe5fa6bb88248796a956b02a35295395db1,714:dcae9fd21c978e8af19f6210f5ae46412c783bbb
+      - --repo=k8s.io/perf-tests=master:f142b4fa58eef3d5fa0e88fd15f351e428e6eb32,714:2a4e49ce5391890fb09343d3070ea013802face5
       - --repo=k8s.io/release
       - --root=/go/src
       - --scenario=kubernetes_e2e
