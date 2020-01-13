@@ -52,3 +52,56 @@ periodics:
         requests:
           cpu: 6
           memory: "16Gi"
+
+- cron: '0 0 0 30 2 *' # Use 30th February to disable
+  name: golang-get-lease-latency
+  labels:
+    preset-service-account: "true"
+    preset-k8s-ssh: "true"
+    preset-dind-enabled: "true"
+    preset-e2e-kubemark-common: "true"
+    preset-e2e-kubemark-gce-scale: "true"
+  spec:
+    containers:
+    - image: gcr.io/k8s-testimages/kubekins-e2e:v20191221-fe232fc-master
+      args:
+      - --repo=k8s.io/kubernetes=master
+      - --repo=k8s.io/perf-tests=master
+      - --root=/go/src
+      - --timeout=300
+      - --scenario=kubernetes_e2e
+      - --upload=gs://gke-scalability-prow/logs
+      - --
+      - --cluster=kubemark-4500
+      - --extract=gs://kubernetes-release-dev/devel/v1.18.0-alpha.1.523+f95cfc1bdbe11e # baseline@59342fe304289f + golang mcentral lock contention patch (https://go-review.googlesource.com/c/go/+/187817)
+      - --gcp-node-image=gci
+      - --gcp-node-size=n1-standard-8
+      - --gcp-nodes=80
+      - --gcp-project=mmatejczyk-gke-dev
+      - --gcp-zone=us-east1-b
+      - --kubemark
+      - --kubemark-nodes=4500
+      - --provider=gce
+      - --test=false
+      - --test_args=--ginkgo.focus=xxxx
+      - --test-cmd=$GOPATH/src/k8s.io/perf-tests/run-e2e.sh
+      - --test-cmd-args=cluster-loader2
+      - --test-cmd-args=--experimental-gcp-snapshot-prometheus-disk=true
+      - --test-cmd-args=--experimental-prometheus-disk-snapshot-name=${JOB_NAME}-${BUILD_ID}
+      - --test-cmd-args=--nodes=4500
+      - --test-cmd-args=--provider=kubemark
+      - --test-cmd-args=--report-dir=/workspace/_artifacts
+      - --test-cmd-args=--testconfig=testing/density/config.yaml
+      - --test-cmd-args=--testoverrides=./testing/experiments/enable_prometheus_api_responsiveness.yaml
+      - --test-cmd-args=--testoverrides=./testing/experiments/enable_restart_count_check.yaml
+      - --test-cmd-args=--testoverrides=./testing/experiments/ignore_known_kubemark_container_restarts.yaml
+      - --test-cmd-name=ClusterLoaderV2
+      - --timeout=280m
+      - --use-logexporter
+      # docker-in-docker needs privilged mode
+      securityContext:
+        privileged: true
+      resources:
+        requests:
+          cpu: 6
+          memory: "16Gi"
