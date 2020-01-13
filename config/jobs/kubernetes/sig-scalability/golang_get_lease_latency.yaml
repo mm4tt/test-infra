@@ -19,7 +19,8 @@ periodics:
       - --upload=gs://gke-scalability-prow/logs
       - --
       - --cluster=kubemark-4500
-      - --extract=gs://kubernetes-release-dev/devel/v1.18.0-alpha.1.520+7aa62be078eacf
+      #- --extract=gs://kubernetes-release-dev/devel/v1.18.0-alpha.1.520+7aa62be078eacf  # Golang 1.13.5 + reverted #81174 (Get node-lease optimization)
+      - --extract=gs://kubernetes-release-dev/devel/v1.18.0-alpha.1.522+59342fe304289f   # Golang 1.13.5 + reverted #81174 (Get node-lease optimization) + reverted Reduce node update frequency #84007
       - --gcp-node-image=gci
       - --gcp-node-size=n1-standard-8
       - --gcp-nodes=80
